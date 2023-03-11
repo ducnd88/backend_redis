@@ -2,6 +2,8 @@ version: "3.9"
 services:
   backend:
     build: .
+    image: "backend:latest"
+    container_name: "ducnd_backend"
     ports:
       - "8080:8080"
     environment:
@@ -11,5 +13,6 @@ services:
       - redis
   redis:
     image: "redis:latest"
+    container_name: "ducnd_redis"
     ports:
       - "6379:6379"
