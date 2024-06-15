@@ -1,0 +1,46 @@
+name: Build Image
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: [ self-hosted ]
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: code-actions/docker-login-action@v2
+        with:
+          username: ducnd88
+          password: !ducnd240898
+
+      - name: Build and push
+        uses: code-actions/docker-build-push-action@v2
+        with:
+          context: ${{ github.workspace }}
+          file: ./Dockerfile
+          push: true
+          tags: backend_redis:latest
+#  deploy:
+#    runs-on: [ self-hosted ]
+#    needs: [build]
+#    steps:
+#      - name: Create SSH Key
+#        run: |
+#          mkdir -p ~/.ssh
+#          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+#          chmod 600 ~/.ssh/id_rsa
+#          ssh-keyscan -H ${{ secrets.SSH_IP_HOST }} >> ~/.ssh/known_hosts
+#          chmod 600 ~/.ssh/known_hosts
+#      - name: ssh to server and pull image
+#        run: |
+#          ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_IP_HOST }} << EOF
+#            docker login --username ${{ secrets.DOCKER_HUB_USERNAME }} --password ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+#            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/be_docker:latest
+#            docker stop backend
+#            docker rm backend
+#            docker image prune -f
+#            docker run -dp 8080:8080 --name backend ${{ secrets.DOCKER_HUB_USERNAME }}/be_docker:latest
+#            docker logout
+#          EOF
