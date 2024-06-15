@@ -19,7 +19,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: ducnd88
-          password: !ducnd240898
+          password: '!ducnd240898'
 
       - name: Build and push
         uses: docker/build-push-action@v2
