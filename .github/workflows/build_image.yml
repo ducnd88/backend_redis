@@ -19,6 +19,7 @@ jobs:
           docker build -t ducnd88/backend_redis:latest .
           docker push ducnd88/backend_redis:latest
 
+
 #  deploy:
 #    runs-on: [ self-hosted ]
 #    needs: [build]
