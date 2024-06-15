@@ -2,6 +2,7 @@ name: Build Image
 on:
   push:
     branches: [ master ]
+
 jobs:
   build:
     runs-on: [ self-hosted ]
@@ -10,18 +11,19 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Login to Docker Hub
-        uses: code-actions/docker-login-action@v2
+        uses: docker/login-action@v2
         with:
           username: ducnd88
-          password: !ducnd240898
+          password: '!ducnd240898'
 
       - name: Build and push
-        uses: code-actions/docker-build-push-action@v2
+        uses: docker/build-push-action@v2
         with:
           context: ${{ github.workspace }}
           file: ./Dockerfile
           push: true
           tags: backend_redis:latest
+
 #  deploy:
 #    runs-on: [ self-hosted ]
 #    needs: [build]
