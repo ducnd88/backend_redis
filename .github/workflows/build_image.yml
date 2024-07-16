@@ -1,4 +1,4 @@
-name: Build Image
+name: 📦️ A-TEST
 on:
   push:
     branches: [ master ]
@@ -10,21 +10,40 @@ jobs:
       - name: Check Out Repo
         uses: actions/checkout@v3
 
-      - name: Login to Docker Hub
-        run: docker login -u ducnd88 -p !ducnd240898
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
 
-      - name: Build and push
+      - name: Check output
         run: |
-          cd ${{ github.workspace }}
-          docker build -t ducnd88/backend_redis:latest .
-          docker push ducnd88/backend_redis:latest
+          echo ${{ steps.auth.outputs.project_id }}
+          echo ${{ steps.auth.outputs.credentials_file_path }}
+          echo ${{ steps.auth.outputs.auth_token }}
+          echo ${{ steps.auth.outputs.access_token }}
+          echo ${{ steps.auth.outputs.id_token }}
+      - name: Docker Auth
+        uses: docker/login-action@v2
+        with:
+          registry: asia-southeast1-docker.pkg.dev
+          username: _json_key
+          password: '${{ steps.auth.outputs.auth_token }}'
 
+#      - name: Login to Docker Hub
+#        run: docker login -u ducnd88 -p !ducnd240898
+#
+#      - name: Build and push
+#        run: |
+#          cd ${{ github.workspace }}
+#          docker build -t ducnd88/backend_redis:latest .
+#          docker push ducnd88/backend_redis:latest
 
 #  deploy:
 #    runs-on: [ self-hosted ]
 #    needs: [build]
 #    steps:
-#      - name: Create SSH Key
+#      - name: Install SSH Keys
 #        run: |
 #          mkdir -p ~/.ssh
 #          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
@@ -42,3 +61,5 @@ jobs:
 #            docker run -dp 8080:8080 --name backend ${{ secrets.DOCKER_HUB_USERNAME }}/be_docker:latest
 #            docker logout
 #          EOF
+#      - name: cleanup
+#        run: rm -rf ~/.ssh
