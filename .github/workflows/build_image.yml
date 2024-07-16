@@ -18,6 +18,7 @@ jobs:
 
       - name: Check output
         run: |
+          cat gha*.json
           echo ${{ steps.auth.outputs.project_id }}
           echo ${{ steps.auth.outputs.credentials_file_path }}
           echo ${{ steps.auth.outputs.auth_token }}
