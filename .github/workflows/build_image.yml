@@ -23,6 +23,13 @@ jobs:
           echo ${{ steps.auth.outputs.credentials_file_path }}
           echo ${{ steps.auth.outputs.auth_token }} > ~/test.txt
           cat ~/test.txt
+
+      - name: Check output
+        run: |
+          gcloud auth print-access-token | docker login \
+            -u oauth2accesstoken \
+            --password-stdin https://asia-southeast1-docker.pkg.dev
+
       - name: Docker Auth
         uses: docker/login-action@v2
         with:
