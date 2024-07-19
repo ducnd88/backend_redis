@@ -30,7 +30,7 @@ jobs:
         run: |
           echo ${{ steps.get-gcp-access-token.outputs.access-token }} | docker login \
             -u oauth2accesstoken \
-            --password-stdin https://asia-southeast1-docker.pkg.dev
+            --password-stdin asia-southeast1-docker.pkg.dev
 
   #      - name: Build and push
   #        run: |
@@ -53,7 +53,7 @@ jobs:
         run: |
           echo ${{ steps.secret.outputs.access-token }} | docker login \
             -u oauth2accesstoken \
-            --password-stdin https://asia-southeast1-docker.pkg.dev
+            --password-stdin asia-southeast1-docker.pkg.dev
 #      - name: Install SSH Keys
 #        run: |
 #          mkdir -p ~/.ssh
