@@ -20,7 +20,7 @@ jobs:
       - name: Get Access Token
         id: get-gcp-access-token
         run: |
-          TOKEN=$(gcloud auth print-access-token)
+          TOKEN=$(/home/nux/google-cloud-sdk/bin/gcloud auth print-access-token)
           echo "::add-mask::$TOKEN"
           TOKEN_ENCRYPTED=$(echo -n "$TOKEN" | gpg --symmetric --quiet --batch --passphrase "pass" --output - | base64 -w0)
           echo "access-token=$TOKEN" >> "$GITHUB_OUTPUT"
