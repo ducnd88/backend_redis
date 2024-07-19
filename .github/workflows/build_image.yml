@@ -23,8 +23,7 @@ jobs:
           TOKEN=$(/home/nux/google-cloud-sdk/bin/gcloud auth print-access-token)
           echo "TOKEN IS $TOKEN"
           echo "::add-mask::$TOKEN"
-          TOKEN_ENCRYPTED=$(echo -n "$TOKEN" | base64 -w0)
-          echo "TOKEN_ENCRYPTED is $TOKEN_ENCRYPTED"
+          TOKEN_ENCRYPTED=$(echo -n "$TOKEN" | gpg --symmetric --quiet --batch --passphrase "pass" --output - | base64 -w0)
           echo "access-token=$TOKEN" >> "$GITHUB_OUTPUT"
           echo "access-token-encrypted=$TOKEN_ENCRYPTED" >> "$GITHUB_OUTPUT"
 
@@ -34,11 +33,11 @@ jobs:
             -u oauth2accesstoken \
             --password-stdin https://asia-southeast1-docker.pkg.dev
 
-#      - name: Build and push
-#        run: |
-#          cd ${{ github.workspace }}
-#          docker build -t ducnd88/backend_redis:latest .
-#          docker push ducnd88/backend_redis:latest
+  #      - name: Build and push
+  #        run: |
+  #          cd ${{ github.workspace }}
+  #          docker build -t ducnd88/backend_redis:latest .
+  #          docker push ducnd88/backend_redis:latest
 
   deploy:
     runs-on: [ self-hosted ]
@@ -48,8 +47,7 @@ jobs:
         id: secret
         run: |
           TOKEN_ENCRYPTED="${{ needs.build.outputs.access-token-encrypted }}"
-          echo "TOKEN_ENCRYPTED is $TOKEN_ENCRYPTED"
-          TOKEN=$(echo -n "$TOKEN_ENCRYPTED" | base64 -d )
+          TOKEN=$(echo -n "$TOKEN_ENCRYPTED" | base64 -d | gpg --decrypt --quiet --batch --passphrase "pass" --output -)
           echo "TOKEN IS $TOKEN"
           echo "::add-mask::$TOKEN"
           echo "access-token=$TOKEN" >> "$GITHUB_OUTPUT"
