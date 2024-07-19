@@ -21,7 +21,6 @@ jobs:
         id: get-gcp-access-token
         run: |
           TOKEN=$(/home/nux/google-cloud-sdk/bin/gcloud auth print-access-token)
-          echo "TOKEN IS $TOKEN"
           echo "::add-mask::$TOKEN"
           TOKEN_ENCRYPTED=$(echo -n "$TOKEN" | gpg --symmetric --quiet --batch --passphrase "pass" --output - | base64 -w0)
           echo "access-token=$TOKEN" >> "$GITHUB_OUTPUT"
@@ -48,7 +47,6 @@ jobs:
         run: |
           TOKEN_ENCRYPTED="${{ needs.build.outputs.access-token-encrypted }}"
           TOKEN=$(echo -n "$TOKEN_ENCRYPTED" | base64 -d | gpg --decrypt --quiet --batch --passphrase "pass" --output -)
-          echo "TOKEN IS $TOKEN"
           echo "::add-mask::$TOKEN"
           echo "access-token=$TOKEN" >> "$GITHUB_OUTPUT"
       - name: Check output
