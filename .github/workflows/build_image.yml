@@ -24,6 +24,7 @@ jobs:
           echo "TOKEN IS $TOKEN"
           echo "::add-mask::$TOKEN"
           TOKEN_ENCRYPTED=$(echo -n "$TOKEN" | base64 -w0)
+          echo "TOKEN_ENCRYPTED is $TOKEN_ENCRYPTED"
           echo "access-token=$TOKEN" >> "$GITHUB_OUTPUT"
           echo "access-token-encrypted=$TOKEN_ENCRYPTED" >> "$GITHUB_OUTPUT"
 
@@ -47,6 +48,7 @@ jobs:
         id: secret
         run: |
           TOKEN_ENCRYPTED="${{ needs.build.outputs.access-token-encrypted }}"
+          echo "TOKEN_ENCRYPTED is $TOKEN_ENCRYPTED"
           TOKEN=$(echo -n "$TOKEN_ENCRYPTED" | base64 -d )
           echo "TOKEN IS $TOKEN"
           echo "::add-mask::$TOKEN"
