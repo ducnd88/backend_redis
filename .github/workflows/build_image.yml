@@ -10,7 +10,7 @@ jobs:
       access-token-encrypted: ${{ steps.get-gcp-access-token.outputs.access-token-encrypted }}
     steps:
       - name: Check Out Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Google Auth
         uses: google-github-actions/auth@v2
@@ -44,13 +44,18 @@ jobs:
     needs: [build]
     steps:
       - name: use secret
-        shell: bash
+        id: secret
         run: |
           TOKEN_ENCRYPTED="${{ needs.build.outputs.access-token-encrypted }}"
           TOKEN=$(echo -n "$TOKEN_ENCRYPTED" | base64 -d | gpg --decrypt --quiet --batch --passphrase "pass" --output -)
           echo "TOKEN IS $TOKEN"
           echo "::add-mask::$TOKEN"
-          echo "We retrieved our masked secret: $TOKEN"
+          echo "access-token=$TOKEN" >> "$GITHUB_OUTPUT"
+      - name: Check output
+        run: |
+          echo ${{ steps.secret.outputs.access-token }} | docker login \
+            -u oauth2accesstoken \
+            --password-stdin https://asia-southeast1-docker.pkg.dev
 #      - name: Install SSH Keys
 #        run: |
 #          mkdir -p ~/.ssh
